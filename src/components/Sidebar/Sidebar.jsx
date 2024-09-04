@@ -1,10 +1,18 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import './Sidebar.css'
 import {assets} from '../../assets/assets'
+import { Context } from '../context/Context';
 
 const Sidebar = () => {
 
   const [extended, setExtended] = React.useState(false);
+
+  const {onSent, previousPrompt, setRecentPrompt} = useContext(Context);
+
+  const loadPrompt = async (prompt) => {
+    setRecentPrompt(prompt);
+    await onSent(prompt);
+  }
 
   const toggleMenu = () => {
     setExtended(extended => !extended);
@@ -24,10 +32,15 @@ const Sidebar = () => {
           ? 
         <div className="recent">
           <p className="recent-title">Recent</p>
-          <div className="recent-entry">
-            <img src={assets.message_icon}></img>
-            <p>What is React...</p>
-          </div>
+          {previousPrompt.map((item) => {
+            return(
+              <div onClick={() => loadPrompt(item)} className="recent-entry">
+                <img src={assets.message_icon}></img>
+                <p>{item.slice(0,18)}</p>
+              </div>
+            )
+          })}
+          
         </div>
           : null
         }
